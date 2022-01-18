@@ -62,11 +62,11 @@ def Mirror_Separate(channel):
 class Separate_Along_X(Operator):
     """separate mesh mirroredly along X"""
     bl_idname = "mesh.separate_along_x"
-    bl_label = "Separate Along X"
+    bl_label = "Separate Along X Global"
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        return context.selected_objects[1] == None
 
     def execute(self, context):
         Mirror_Separate(Channel.x)
@@ -75,11 +75,11 @@ class Separate_Along_X(Operator):
 class Separate_Along_Y(Operator):
     """separate mesh mirroredly along Y"""
     bl_idname = "mesh.separate_along_y"
-    bl_label = "Separate Along Y"
+    bl_label = "Separate Along Y Global"
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        return context.selected_objects[1] == None
 
     def execute(self, context):
         Mirror_Separate(Channel.y)
@@ -88,11 +88,11 @@ class Separate_Along_Y(Operator):
 class Separate_Along_Z(Operator):
     """separate mesh mirroredly along Z"""
     bl_idname = "mesh.separate_along_z"
-    bl_label = "Separate Along Z"
+    bl_label = "Separate Along Z Global"
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        return context.selected_objects[1] == None
 
     def execute(self, context):
         Mirror_Separate(Channel.z)
@@ -124,7 +124,6 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-
     bpy.types.VIEW3D_MT_edit_mesh_context_menu.prepend(menu_func)
 
 
