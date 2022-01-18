@@ -21,14 +21,13 @@ class Channel:
     y = 1
     z = 2
 
-
 def mirror_separate(channel: int):
     cursor = bpy.context.scene.cursor
     cursor_original_location = cursor.location.xyz
 
     obj = bpy.context.selected_objects[0]
     obj_original_location = obj.location.xyz
-    obj_name = obj.name_full
+    obj_name: str = obj.name_full
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
@@ -65,13 +64,12 @@ class SeparateAlongX(Operator):
     bl_label = "Separate Along X Global"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context) -> bool:
         return len(context.selected_objects) < 2
 
     def execute(self, context):
         mirror_separate(Channel.x)
         return {'FINISHED'}
-
 
 class SeparateAlongY(Operator):
     """separate mesh mirroredly along Y"""
@@ -79,13 +77,12 @@ class SeparateAlongY(Operator):
     bl_label = "Separate Along Y Global"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context) -> bool:
         return len(context.selected_objects) < 2
 
     def execute(self, context):
         mirror_separate(Channel.y)
         return {'FINISHED'}
-
 
 class SeparateAlongZ(Operator):
     """separate mesh mirroredly along Z"""
@@ -93,7 +90,7 @@ class SeparateAlongZ(Operator):
     bl_label = "Separate Along Z Global"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context) -> bool:
         return len(context.selected_objects) < 2
 
     def execute(self, context):
@@ -119,10 +116,10 @@ def menu_func(self, context):
 
 
 classes = (
-    VIEW3D_MT_edit_mesh_Mirror_Separate,
     SeparateAlongX,
     SeparateAlongY,
     SeparateAlongZ,
+    VIEW3D_MT_edit_mesh_Mirror_Separate,
 )
 
 
