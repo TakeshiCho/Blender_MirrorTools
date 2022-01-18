@@ -11,32 +11,31 @@ bl_info = {
 }
 
 import bpy
-from bpy.types import (Operator,Menu)
+from bpy.types import (Operator, Menu)
+
 
 # ---------- Main function ---------- 
 
-class Channel():
+class Channel:
     x = 0
     y = 1
     z = 2
 
-def Mirror_Separate(channel):
 
+def mirror_separate(channel: int):
     cursor = bpy.context.scene.cursor
     cursor_original_location = cursor.location.xyz
-
 
     obj = bpy.context.selected_objects[0]
     obj_original_location = obj.location.xyz
     obj_name = obj.name_full
 
     bpy.ops.object.editmode_toggle()
-
     bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-    obj_median_loction = obj.location.xyz
+    obj_median_location = obj.location.xyz
 
     obj_target_location = obj_original_location.xyz
-    obj_target_location[channel] += ((obj_median_loction[channel]- obj_original_location[channel])*2)
+    obj_target_location[channel] += ((obj_median_location[channel] - obj_original_location[channel]) * 2)
 
     cursor.location = obj_target_location
     bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
@@ -45,81 +44,87 @@ def Mirror_Separate(channel):
     bpy.ops.mesh.separate(type='SELECTED')
     bpy.ops.object.editmode_toggle()
 
-    #separated_obj_name = bpy.context.selected_objects[1].name_full
+    # separated_obj_name = bpy.context.selected_objects[1].name_full
 
     cursor.location = obj_original_location.xyz
     bpy.ops.object.select_all(action='DESELECT')
     bpy.ops.object.select_pattern(pattern=obj_name)
     bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
 
-    #bpy.ops.object.select_pattern(pattern=separated_obj_name)
+    # bpy.ops.object.select_pattern(pattern=separated_obj_name)
 
     cursor.location = cursor_original_location.xyz
     bpy.ops.object.editmode_toggle()
 
+
 # ---------- Operator ---------- 
 
-class Separate_Along_X(Operator):
+class SeparateAlongX(Operator):
     """separate mesh mirroredly along X"""
     bl_idname = "mesh.separate_along_x"
     bl_label = "Separate Along X Global"
 
     @classmethod
     def poll(cls, context):
-        return context.selected_objects[1] == None
+        return len(context.selected_objects) < 2
 
     def execute(self, context):
-        Mirror_Separate(Channel.x)
+        mirror_separate(Channel.x)
         return {'FINISHED'}
 
-class Separate_Along_Y(Operator):
+
+class SeparateAlongY(Operator):
     """separate mesh mirroredly along Y"""
     bl_idname = "mesh.separate_along_y"
     bl_label = "Separate Along Y Global"
 
     @classmethod
     def poll(cls, context):
-        return context.selected_objects[1] == None
+        return len(context.selected_objects) < 2
 
     def execute(self, context):
-        Mirror_Separate(Channel.y)
+        mirror_separate(Channel.y)
         return {'FINISHED'}
 
-class Separate_Along_Z(Operator):
+
+class SeparateAlongZ(Operator):
     """separate mesh mirroredly along Z"""
     bl_idname = "mesh.separate_along_z"
     bl_label = "Separate Along Z Global"
 
     @classmethod
     def poll(cls, context):
-        return context.selected_objects[1] == None
+        return len(context.selected_objects) < 2
 
     def execute(self, context):
-        Mirror_Separate(Channel.z)
-        return {'FINISHED'}    
+        mirror_separate(Channel.z)
+        return {'FINISHED'}
 
-# ---------- GUI and registration ---------- 
+    # ---------- GUI and registration ---------- 
+
 
 class VIEW3D_MT_edit_mesh_Mirror_Separate(Menu):
     bl_label = "Mirror Separate"
 
     def draw(self, context):
         layout = self.layout
-        layout.operator(Separate_Along_X.bl_idname, text=Separate_Along_X.bl_label)
-        layout.operator(Separate_Along_Y.bl_idname, text=Separate_Along_Y.bl_label)
-        layout.operator(Separate_Along_Z.bl_idname, text=Separate_Along_Z.bl_label)
-        
-    
+        layout.operator(SeparateAlongX.bl_idname, text=SeparateAlongX.bl_label)
+        layout.operator(SeparateAlongY.bl_idname, text=SeparateAlongY.bl_label)
+        layout.operator(SeparateAlongZ.bl_idname, text=SeparateAlongZ.bl_label)
+
+
 def menu_func(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_Mirror_Separate")
     self.layout.separator()
-    
+
+
 classes = (
     VIEW3D_MT_edit_mesh_Mirror_Separate,
-    Separate_Along_X,
-    Separate_Along_Y,
-    Separate_Along_Z,
+    SeparateAlongX,
+    SeparateAlongY,
+    SeparateAlongZ,
 )
+
 
 def register():
     for cls in classes:
